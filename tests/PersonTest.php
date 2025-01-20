@@ -4,7 +4,7 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 
-class TestPerson extends TestCase
+class PersonTest extends TestCase
 {
     /**
      * Test the person class.
@@ -88,6 +88,48 @@ class TestPerson extends TestCase
     }
 
     /**
+     * Test the transfertFund method when the person has insufficient fund.
+     * @return void
+     * @throws \Exception
+     */
+    public function testPersonTransfertFundWithInsufficientFund() : void
+    {
+        $person1 = new \App\Entity\Person('John Doe', 'USD');
+        $wallet1 = new \App\Entity\Wallet('USD');
+        $wallet1->setBalance(100);
+        $person1->setWallet($wallet1);
+
+        $person2 = new \App\Entity\Person('Jane Doe', 'USD');
+        $wallet2 = new \App\Entity\Wallet('USD');
+        $wallet2->setBalance(100);
+        $person2->setWallet($wallet2);
+
+        $this->expectException(\Exception::class);
+        $person1->transfertFund(150, $person2);
+    }
+
+    /**
+     * Test the transfertFund method when the amount is invalid.
+     * @return void
+     * @throws \Exception
+     */
+    public function testPersonTransfertFundWithInvalidAmount() : void
+    {
+        $person1 = new \App\Entity\Person('John Doe', 'USD');
+        $wallet1 = new \App\Entity\Wallet('USD');
+        $wallet1->setBalance(100);
+        $person1->setWallet($wallet1);
+
+        $person2 = new \App\Entity\Person('Jane Doe', 'USD');
+        $wallet2 = new \App\Entity\Wallet('USD');
+        $wallet2->setBalance(100);
+        $person2->setWallet($wallet2);
+
+        $this->expectException(\Exception::class);
+        $person1->transfertFund(-50, $person2);
+    }
+
+    /**
      * Test the transfertFund method when the wallet currency is the same as the person's wallet currency.
      * @return void
      * @throws \Exception
@@ -107,5 +149,25 @@ class TestPerson extends TestCase
         $person1->transfertFund(50, $person2);
         $this->assertEquals(50, $person1->getWallet()->getBalance());
         $this->assertEquals(150, $person2->getWallet()->getBalance());
+    }
+
+    // TODO: Add tests for the divideWallet method
+
+    /**
+     * Test the buyProduct method.
+     * @return void
+     * @throws \Exception
+     */
+    public function testPersonBuyProduct() : void
+    {
+        $person = new \App\Entity\Person('John Doe', 'USD');
+        $wallet = new \App\Entity\Wallet('USD');
+        $wallet->setBalance(100);
+        $person->setWallet($wallet);
+
+        $product = new \App\Entity\Product('Product 1', 50);
+
+        $person->buyProduct($product);
+        $this->assertEquals(50, $person->getWallet()->getBalance());
     }
 }
