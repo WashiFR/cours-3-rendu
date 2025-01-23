@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Entity\Product;
 use PHPUnit\Framework\TestCase;
 
 class PersonTest extends TestCase
@@ -154,6 +155,24 @@ class PersonTest extends TestCase
     // TODO: Add tests for the divideWallet method
 
     /**
+     * Test the buyProduct method when the person has insufficient fund.
+     * @return void
+     * @throws \Exception
+     */
+    public function testPersonBuyProductWithInsufficientFund() : void
+    {
+        $person = new \App\Entity\Person('John Doe', 'USD');
+        $wallet = new \App\Entity\Wallet('USD');
+        $wallet->setBalance(100);
+        $person->setWallet($wallet);
+
+        $product = new \App\Entity\Product('Product 1', 150, 'food');
+
+        $this->expectException(\Exception::class);
+        $person->buyProduct($product);
+    }
+
+    /**
      * Test the buyProduct method.
      * @return void
      * @throws \Exception
@@ -165,7 +184,7 @@ class PersonTest extends TestCase
         $wallet->setBalance(100);
         $person->setWallet($wallet);
 
-        $product = new \App\Entity\Product('Product 1', 50);
+        $product = new \App\Entity\Product('Product 1', 50, 'food');
 
         $person->buyProduct($product);
         $this->assertEquals(50, $person->getWallet()->getBalance());
