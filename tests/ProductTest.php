@@ -65,4 +65,26 @@ class ProductTest extends TestCase
         $product = new Product("Laptop", ["USD" => 1000, "EUR" => 900], "tech");
         $product->getPrice("GBP");
     }
+
+    public function testSetPricesIgnoresInvalidCurrency()
+    {
+        $prices = ["USD" => 1000, "GBP" => 800];
+        $product = new Product("Laptop", $prices, "tech");
+        $this->assertArrayNotHasKey("GBP", $product->getPrices());
+    }
+
+    public function testSetPricesIgnoresNegativePrices()
+    {
+        $prices = ["USD" => 1000, "EUR" => -50];
+        $product = new Product("Laptop", $prices, "tech");
+        $this->assertArrayNotHasKey("EUR", $product->getPrices());
+    }
+
+    public function testGetPriceUnavailableCurrencyThrowsException()
+    {
+        $this->expectException(Exception::class);
+        $product = new Product("Laptop", ["USD" => 1000], "tech");
+        $product->getPrice("EUR"); // EUR n'est pas défini dans les prix
+    }
+
 }
