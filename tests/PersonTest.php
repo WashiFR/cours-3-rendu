@@ -93,6 +93,7 @@ class PersonTest extends TestCase
         $person->buyProduct($product);
     }
 
+    // Test qui ne fonctionne pas
     public function testBuyProductWithoutEnoughFunds()
     {
         $this->expectException(Exception::class);
